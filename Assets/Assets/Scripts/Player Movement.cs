@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 m_playerdirection;
     private float m_speed = 15;
     private int m_jumpcount = 1;
+    private int m_maxjumpcount = 2;
     private float m_jumpheight = 10;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
@@ -45,10 +46,13 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down,out m_hit,20, m_raylayer))
         {
             //Debug.Log(m_hit.distance);
-            if (m_jumpcount == 0 && m_hit.distance < 1.2 && m_coroutinerunning == false)
+            if (m_jumpcount < m_maxjumpcount && m_hit.distance < 1.2 && m_coroutinerunning == false)
             {
                 Debug.Log("Jump added too");
-                m_jumpcount = 1;
+                while (m_jumpcount < m_maxjumpcount)
+                {
+                    m_jumpcount++;
+                }
                 StartCoroutine(HasJumpedRecently());
 
                 
@@ -91,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
            
         }
     }
+    // coroutine so you can't get another jump right after you have just jumped (raycast distance check has room for error)
     private IEnumerator HasJumpedRecently()
     {
         Debug.Log("got to enumerator");
