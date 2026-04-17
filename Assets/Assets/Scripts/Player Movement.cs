@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class PlayerMovement : MonoBehaviour
 {
     private Vector2 m_playerdirection;
-    private float m_speed = 5;
+    private float m_speed = 15;
     private Rigidbody m_rigidbody;
     private CapsuleCollider m_capsulecollider;
     private void Awake()
@@ -25,16 +25,21 @@ public class PlayerMovement : MonoBehaviour
     {
         
     }
+    private void FixedUpdate()
+    {
+         if (m_rigidbody != null)
+            {
+                m_rigidbody.linearVelocity = new Vector3(m_playerdirection.x * m_speed,m_rigidbody.linearVelocity.y,m_rigidbody.linearVelocity.z);
+            }
+    }
     public void HandleMovement(InputAction.CallbackContext ctx)
     {
         if (ctx.performed || ctx.started)
         {
             Debug.Log("PERFORMED");
             m_playerdirection = ctx.ReadValue<Vector2>();
-            if (m_rigidbody != null)
-            {
-                m_rigidbody.linearVelocity = m_playerdirection * m_speed;
-            }
+            Debug.Log(m_playerdirection);
+           
         }
         
         else if (ctx.canceled)
