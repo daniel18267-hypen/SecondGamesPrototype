@@ -11,11 +11,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 m_playerdirection;
     private float m_speed = 15;
     private int m_jumpcount = 1;
-    private int m_maxjumpcount = 2;
-    private float m_jumpheight = 10;
+    private int m_maxjumpcount = 1;
+    private float m_initjumpheight = 10;
+    private float m_finaljumpheight;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
-    private bool m_coroutinerunning;
+    private bool m_hasjumpedrecently;
+    private bool m_coyoteactive;
     private Vector3 m_tempvelocity;
     [SerializeField] private LayerMask m_raylayer;
     private bool m_jumpedrecently;
@@ -39,29 +41,44 @@ public class PlayerMovement : MonoBehaviour
          if (m_rigidbody != null)
             {
             m_tempvelocity = m_rigidbody.linearVelocity;
-            // m_rigidbody.linearVelocity = new Vector3(m_playerdirection.x * m_speed,m_rigidbody.linearVelocity.y,m_rigidbody.linearVelocity.z); // handles x axis movement, y and z axis movement unchanged
-            m_tempvelocity.x = (m_playerdirection.x * m_speed);
+            m_tempvelocity.x = (m_playerdirection.x * m_speed); // can't just get rigidbodyvelocity.x so have to set it to temp variable and get thats .x
             m_rigidbody.linearVelocity = m_tempvelocity;
-            }
+           
+        }
         if (Physics.Raycast(transform.position, Vector3.down,out m_hit,20, m_raylayer))
         {
             //Debug.Log(m_hit.distance);
-            if (m_jumpcount < m_maxjumpcount && m_hit.distance < 1.2 && m_coroutinerunning == false)
+            // detects if on the ground and gives you back jump if you are.
+            if (m_jumpcount < m_maxjumpcount && m_hit.distance < 1.2 && m_hasjumpedrecently == false)
             {
                 Debug.Log("Jump added too");
-                while (m_jumpcount < m_maxjumpcount)
-                {
-                    m_jumpcount++;
-                }
-                StartCoroutine(HasJumpedRecently());
 
-                
+                if (m_jumpcount < m_maxjumpcount)
+                {
+                    Debug.Log("added to jump count ");
+                    m_jumpcount++;
+
+                }
+
+
+
+
             }
+            else if (m_hit.distance > 1.2 && m_jumpcount == m_maxjumpcount && m_coyoteactive == false)
+            {
+                StartCoroutine(CoyoteTime());
+                Debug.Log("triggered");
+
+                Debug.Log("coyote");
+            }
+          
         }
-        else if (!Physics.Raycast(transform.position, Vector3.down, out m_hit, 20, m_raylayer))
-        {
-            m_jumpcount = 0;
-        }
+        // no jump if you fall off something, need to fix this tbh
+        //else if (!Physics.Raycast(transform.position, Vector3.down, out m_hit, 20, m_raylayer))
+       // {
+            // so you can jump if you have double jump but not if you don't
+         //   m_jumpcount = m_maxjumpcount - 1;
+       // }
 
     }
     public void HandleMovement(InputAction.CallbackContext ctx)
@@ -90,22 +107,49 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log(m_jumpcount);
             Debug.Log("Fired");
-            m_rigidbody.AddForce(Vector3.up * m_jumpheight, ForceMode.Impulse);
+            if (m_tempvelocity.y < -0.1)
+            {
+                m_finaljumpheight = m_initjumpheight * 2f;
+            }
+            else
+            {
+                m_finaljumpheight = m_initjumpheight;
+            }
+            m_rigidbody.AddForce(Vector3.up * m_finaljumpheight, ForceMode.Impulse);
             m_jumpcount = m_jumpcount - 1;
-           
+            // does this coroutine so you don't get an additional jump as soon as you leave the ground, due to leniency on hit distance.
+            StartCoroutine(HasJumpedRecently());
+
         }
     }
     // coroutine so you can't get another jump right after you have just jumped (raycast distance check has room for error)
     private IEnumerator HasJumpedRecently()
     {
         Debug.Log("got to enumerator");
-        m_coroutinerunning = true;
-        Debug.Log(m_coroutinerunning);
-        yield return new WaitForSeconds(1f);
-        m_coroutinerunning = false;
-        Debug.Log(m_coroutinerunning);
+        m_hasjumpedrecently = true;
+        yield return new WaitForSeconds(0.2f);
+        
+        m_hasjumpedrecently = false;
 
     }
+    private IEnumerator CoyoteTime()
+    {
+        m_coyoteactive = true;
+        yield return new WaitForSeconds(1f);
+        m_jumpcount--; // so you can still have your double jump but not your initial "grounded" jump;
+        m_coyoteactive = false;
+        
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "doublejump")
+        {
+            m_maxjumpcount = 2;
+            Destroy(other.gameObject);
+        }
+    }
+    
+
 
 
 }
