@@ -136,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
     {
         m_coyoteactive = true;
         yield return new WaitForSeconds(1f);
-        m_jumpcount--; // so you can still have your double jump but not your initial "grounded" jump;
+        m_jumpcount = m_maxjumpcount - 1 ; // so you can still have your double jump but not your initial "grounded" jump;
         m_coyoteactive = false;
         
     }
