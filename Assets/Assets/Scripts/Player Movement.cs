@@ -4,19 +4,24 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using UnityEngine.Events;
 
 
 public class PlayerMovement : MonoBehaviour
 {
+    public UnityEvent<bool> SwitchChanged;
     private Vector2 m_playerdirection;
     private float m_speed = 15;
     private int m_jumpcount = 1;
     private int m_maxjumpcount = 1;
-    private float m_initjumpheight = 10;
-    private float m_finaljumpheight;
+    private float m_jumpheight = 10;
+    private int m_dashcount = 0;
+    private int m_maxdashcount = 0;
+    private float m_dashpower = 500;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
     private bool m_hasjumpedrecently;
+    private bool m_switchstate;
     private bool m_coyoteactive;
     private Vector3 m_tempvelocity;
     [SerializeField] private LayerMask m_raylayer;
@@ -48,16 +53,21 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down,out m_hit,20, m_raylayer))
         {
             //Debug.Log(m_hit.distance);
-            // detects if on the ground and gives you back jump if you are.
-            if (m_jumpcount < m_maxjumpcount && m_hit.distance < 1.2 && m_hasjumpedrecently == false)
+            // detects if on the ground and gives you back jump  and dashif you are.
+            if ( m_hit.distance < 1.2 )
             {
-                Debug.Log("Jump added too");
+                //Debug.Log("Jump added too");
 
-                if (m_jumpcount < m_maxjumpcount)
+                if (m_jumpcount < m_maxjumpcount && m_hasjumpedrecently == false)
                 {
-                    Debug.Log("added to jump count ");
+                   // Debug.Log("added to jump count ");
                     m_jumpcount++;
 
+                }
+                if (m_dashcount < m_maxdashcount)
+                {
+                    Debug.Log("got to max dash count");
+                    m_dashcount++;
                 }
 
 
@@ -73,21 +83,16 @@ public class PlayerMovement : MonoBehaviour
             }
           
         }
-        // no jump if you fall off something, need to fix this tbh
-        //else if (!Physics.Raycast(transform.position, Vector3.down, out m_hit, 20, m_raylayer))
-       // {
-            // so you can jump if you have double jump but not if you don't
-         //   m_jumpcount = m_maxjumpcount - 1;
-       // }
+      
 
     }
     public void HandleMovement(InputAction.CallbackContext ctx)
     {
         if (ctx.performed || ctx.started)
         {
-            Debug.Log("PERFORMED");
+           // Debug.Log("PERFORMED");
             m_playerdirection = ctx.ReadValue<Vector2>();
-            Debug.Log(m_playerdirection);
+          //  Debug.Log(m_playerdirection);
            
         }
         
@@ -105,27 +110,47 @@ public class PlayerMovement : MonoBehaviour
     { // can jump if jump count greater than 0, did this instead of bool as double jump exists
         if (ctx.started && m_jumpcount > 0)
         {
-            Debug.Log(m_jumpcount);
-            Debug.Log("Fired");
-            if (m_tempvelocity.y < -0.1)
-            {
-                m_finaljumpheight = m_initjumpheight * 2f;
-            }
-            else
-            {
-                m_finaljumpheight = m_initjumpheight;
-            }
-            m_rigidbody.AddForce(Vector3.up * m_finaljumpheight, ForceMode.Impulse);
+            //Debug.Log(m_jumpcount);
+           // Debug.Log("Fired");
+            m_tempvelocity.y = 0;
+            m_rigidbody.linearVelocity = m_tempvelocity;
+            m_rigidbody.AddForce(Vector3.up * m_jumpheight, ForceMode.Impulse);
             m_jumpcount = m_jumpcount - 1;
             // does this coroutine so you don't get an additional jump as soon as you leave the ground, due to leniency on hit distance.
             StartCoroutine(HasJumpedRecently());
 
         }
     }
+    public void HandleDash(InputAction.CallbackContext ctx)
+    {
+        // for handling dash ability
+
+        if (ctx.performed && m_dashcount > 0 )
+        {
+            // gets what input you did and dashes left or right accordingly.
+            if(ctx.control.name == "a")
+            {
+                m_rigidbody.AddForce(Vector3.left * m_dashpower, ForceMode.Impulse);
+            }
+            if(ctx.control.name == "d")
+            {
+                
+                m_rigidbody.AddForce(Vector3.right * m_dashpower, ForceMode.Impulse);
+            }
+            m_dashcount--;
+        }
+    }
+    public void HandleSwitch(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            SwitchChanged?.Invoke(!m_switchstate);
+        }
+    }
     // coroutine so you can't get another jump right after you have just jumped (raycast distance check has room for error)
     private IEnumerator HasJumpedRecently()
     {
-        Debug.Log("got to enumerator");
+        //Debug.Log("got to enumerator");
         m_hasjumpedrecently = true;
         yield return new WaitForSeconds(0.2f);
         
@@ -145,6 +170,11 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "doublejump")
         {
             m_maxjumpcount = 2;
+            Destroy(other.gameObject);
+        }
+        else if(other.gameObject.tag == "dash")
+        {
+            m_maxdashcount = 1;
             Destroy(other.gameObject);
         }
     }
