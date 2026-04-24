@@ -144,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (ctx.started)
         {
+            m_switchstate = !m_switchstate;
             SwitchChanged?.Invoke(!m_switchstate);
         }
     }
