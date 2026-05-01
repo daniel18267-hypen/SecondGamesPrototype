@@ -23,7 +23,6 @@ public class TextDisplay : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
-       
         //m_panel.SetActive(false);
     }
     void Start()
