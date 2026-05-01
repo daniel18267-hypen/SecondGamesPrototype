@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public UnityEvent<bool> SwitchChanged;
     private Vector2 m_playerdirection;
+    private Vector3 m_spawnpoint;
     private float m_speed = 15;
     private int m_jumpcount = 1;
     private int m_maxjumpcount = 1;
@@ -34,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        m_spawnpoint = transform.position; // sets spawn point to where the player spawns.
     }
 
     // Update is called once per frame
@@ -178,6 +180,14 @@ public class PlayerMovement : MonoBehaviour
             m_maxdashcount = 1;
             Destroy(other.gameObject);
         }
+    }
+    public void HandleSetCheckPoint(Vector3 m_checkpointlocation)
+    {
+       m_spawnpoint = m_checkpointlocation;
+    }
+    public void Death()
+    {
+        transform.position = m_spawnpoint;
     }
     
 

@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class TextParser : MonoBehaviour
 {
     private bool m_textfinished = false;
+    private CanvasRenderer m_canvasrenderer;
     [SerializeField] private TextMeshProUGUI m_tmpro;
     private bool m_textcooldown = true;
     private bool m_intrigger = false;
@@ -18,6 +19,12 @@ public class TextParser : MonoBehaviour
     private string m_text;
     int m_index = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        m_canvasrenderer = GetComponent<CanvasRenderer>();
+        m_canvasrenderer.SetAlpha(0f);
+        //gameObject.SetActive(false);
+    }
     void Start()
     {
         
@@ -27,7 +34,7 @@ public class TextParser : MonoBehaviour
     void Update()
     {
         
-            if (m_textfinished == false && m_textcooldown == true && m_textboxcooldown == true && m_intrigger == true)
+            if (m_textfinished == false && m_textcooldown == true && m_textboxcooldown == true && m_intrigger == true )
             {
                 m_tmpro.text = m_tmpro.text + ($"{m_text[m_index]}");
                 if (m_index > (50 * m_textboxcount) && m_text[m_index] == ' ') // if there are more than 30 characters in current text box and there is a space next it'll reset, done so it doesn't cut of mid sentence
@@ -51,18 +58,24 @@ public class TextParser : MonoBehaviour
     }
     public void TextHandler(string text)
     {
+       // gameObject.SetActive(true);
         m_textfinished = false;
-       gameObject.SetActive(true);
+        m_canvasrenderer.SetAlpha(1f);
         m_index = 0;
-        m_tmpro.text = "";
+        //m_tmpro.text = "";
         m_textboxcount = 1;
         m_intrigger = true;
         m_text = text;
-       
+      
+
     }
     public void StopText()
     {
+      
         m_intrigger = false;
+        m_canvasrenderer.SetAlpha(0f);
+        m_tmpro.text = "";
+        //gameObject.SetActive(false);
         //gameObject.SetActive(false);
     }
     private IEnumerator TextCooldown()

@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class TextDisplay : MonoBehaviour
 {
     public UnityEvent<string> EnteredTrigger;
+    public UnityEvent<Vector3> SetSpawnPoint;
     public UnityEvent LeftTrigger;
    [SerializeField] private TextMeshProUGUI m_tmpro;
     [SerializeField] private GameObject m_panel;
@@ -38,7 +39,8 @@ public class TextDisplay : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            EnteredTrigger?.Invoke("truth nuke");
+            EnteredTrigger?.Invoke(m_text);
+            
          /*   m_textfinished = false;
             m_panel.SetActive(true);
             m_index = 0;
@@ -74,6 +76,7 @@ public class TextDisplay : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             LeftTrigger?.Invoke();
+            SetSpawnPoint?.Invoke(transform.position);
            // m_panel.SetActive(false);
         }
     }
