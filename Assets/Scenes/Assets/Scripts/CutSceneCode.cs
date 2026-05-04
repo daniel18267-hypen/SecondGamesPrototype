@@ -4,21 +4,17 @@ using TMPro;
 using System.Collections;
 public class CutsceneCode : MonoBehaviour
 {
-    public UnityEvent<bool> CutSceneEnd;
-    private TextMeshProUGUI m_text;
-    private string[] m_cutscenelines;
+    public UnityEvent CutSceneEnd;
+    private TextMeshProUGUI m_tmpro;
+    [SerializeField] private string[] m_cutscenelines;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
-       m_text =  GetComponentInChildren<TextMeshProUGUI>();
-        m_cutscenelines[0] = "1";
-        m_cutscenelines[1] = "2";
-        m_cutscenelines[2] = "3";
-        m_cutscenelines[3] = "4";
+       m_tmpro =  GetComponentInChildren<TextMeshProUGUI>();
     }
     void Start()
     {
-        
+        StartCoroutine(TextCooldown());
     }
 
     // Update is called once per frame
@@ -30,7 +26,10 @@ public class CutsceneCode : MonoBehaviour
     {
         for (int i = 0; i < m_cutscenelines.Length; i++)
         {
-            m_text = m_cutscenelines[i];
+            m_tmpro.text = m_cutscenelines[i];
+            yield return new WaitForSeconds(2.5f);
         }
+        CutSceneEnd?.Invoke();
+        gameObject.SetActive(false);
     }
 }

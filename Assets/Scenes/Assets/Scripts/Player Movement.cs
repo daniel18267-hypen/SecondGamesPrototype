@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private float m_jumpheight = 10;
     private int m_dashcount = 0;
     private int m_maxdashcount = 0;
+    private bool m_incutscene = true;
     private float m_dashpower = 500;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private CapsuleCollider m_capsulecollider;
     private void Awake()
     {   
+
          m_rigidbody = GetComponent<Rigidbody>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -88,29 +90,35 @@ public class PlayerMovement : MonoBehaviour
       
 
     }
+    public void HandleCutscene()
+    {
+        m_incutscene = !m_incutscene;
+    }
     public void HandleMovement(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed || ctx.started)
+        if (m_incutscene == false) // cant move unless in cutscene
         {
-           // Debug.Log("PERFORMED");
-            m_playerdirection = ctx.ReadValue<Vector2>();
-          //  Debug.Log(m_playerdirection);
-           
-        }
-        
-        else if (ctx.canceled)
-        {
-            if (m_rigidbody != null)
+            if (ctx.performed || ctx.started)
             {
-                m_rigidbody.linearVelocity = new Vector3(0,m_tempvelocity.y,0);
-            }
-            m_playerdirection = Vector3.zero;
-        }
+                // Debug.Log("PERFORMED");
+                m_playerdirection = ctx.ReadValue<Vector2>();
+                //  Debug.Log(m_playerdirection);
 
+            }
+
+            else if (ctx.canceled)
+            {
+                if (m_rigidbody != null)
+                {
+                    m_rigidbody.linearVelocity = new Vector3(0, m_tempvelocity.y, 0);
+                }
+                m_playerdirection = Vector3.zero;
+            }
+        }
     }
     public void HandleJump(InputAction.CallbackContext ctx)
     { // can jump if jump count greater than 0, did this instead of bool as double jump exists
-        if (ctx.started && m_jumpcount > 0)
+        if (ctx.started && m_jumpcount > 0 && m_incutscene == false)
         {
             //Debug.Log(m_jumpcount);
            // Debug.Log("Fired");
@@ -127,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // for handling dash ability
 
-        if (ctx.performed && m_dashcount > 0 )
+        if (ctx.performed && m_dashcount > 0 && m_incutscene == false)
         {
             // gets what input you did and dashes left or right accordingly.
             if(ctx.control.name == "a")
@@ -144,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void HandleSwitch(InputAction.CallbackContext ctx)
     {
-        if (ctx.started)
+        if (ctx.started && m_incutscene == false)
         {
             m_switchstate = !m_switchstate;
             SwitchChanged?.Invoke(!m_switchstate);
