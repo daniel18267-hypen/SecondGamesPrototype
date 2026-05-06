@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private int m_dashcount = 0;
     private int m_maxdashcount = 0;
     private bool m_incutscene = true;
-    private bool m_canswitch;
+    private bool m_canswitch = true;
     private float m_dashpower = 500;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
@@ -121,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
     { // can jump if jump count greater than 0, did this instead of bool as double jump exists
         if (ctx.started && m_jumpcount > 0 )
         {
-            //Debug.Log(m_jumpcount);
+            Debug.Log(m_jumpcount);
            // Debug.Log("Fired");
             m_tempvelocity.y = 0;
             m_rigidbody.linearVelocity = m_tempvelocity;
@@ -173,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator CoyoteTime()
     {
         m_coyoteactive = true;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
         m_jumpcount = m_maxjumpcount - 1 ; // so you can still have your double jump but not your initial "grounded" jump;
         m_coyoteactive = false;
         
