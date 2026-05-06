@@ -81,14 +81,14 @@ public class TextParser : MonoBehaviour
     private IEnumerator TextCooldown()
     {
         m_textcooldown = false;
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.03f);
         m_textcooldown = true;
     }
     private IEnumerator TextBoxCooldown()
     {
 
         m_textboxcooldown = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         m_tmpro.text = "";
         m_textboxcooldown = true;
 

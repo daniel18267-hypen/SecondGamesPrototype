@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private int m_dashcount = 0;
     private int m_maxdashcount = 0;
     private bool m_incutscene = true;
+    private bool m_canswitch;
     private float m_dashpower = 500;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
@@ -118,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void HandleJump(InputAction.CallbackContext ctx)
     { // can jump if jump count greater than 0, did this instead of bool as double jump exists
-        if (ctx.started && m_jumpcount > 0 && m_incutscene == false)
+        if (ctx.started && m_jumpcount > 0 )
         {
             //Debug.Log(m_jumpcount);
            // Debug.Log("Fired");
@@ -135,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // for handling dash ability
 
-        if (ctx.performed && m_dashcount > 0 && m_incutscene == false)
+        if (ctx.performed && m_dashcount > 0 )
         {
             // gets what input you did and dashes left or right accordingly.
             if(ctx.control.name == "a")
@@ -152,7 +153,8 @@ public class PlayerMovement : MonoBehaviour
     }
     public void HandleSwitch(InputAction.CallbackContext ctx)
     {
-        if (ctx.started && m_incutscene == false)
+        // for handling switching between blocks
+        if (ctx.started && m_canswitch == true)
         {
             m_switchstate = !m_switchstate;
             SwitchChanged?.Invoke(!m_switchstate);
@@ -181,12 +183,14 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "doublejump")
         {
             m_maxjumpcount = 2;
-            Destroy(other.gameObject);
         }
         else if(other.gameObject.tag == "dash")
         {
             m_maxdashcount = 1;
-            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.tag == "switch")
+        {
+            m_canswitch = true;
         }
     }
     public void HandleSetCheckPoint(Vector3 m_checkpointlocation)
