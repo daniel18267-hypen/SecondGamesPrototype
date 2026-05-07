@@ -25,17 +25,8 @@ public class SwitchBlocks : MonoBehaviour
             m_meshrenderer.material.color = new Vector4(m_color.r, m_color.g, m_color.b, 0.5f);
         }
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void SwitchHandler(bool m_switchstate)
+   
+    public void ToggleSwitch(bool m_switchstate)
     {
         if(m_switchstate == true)
         {

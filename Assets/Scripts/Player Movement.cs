@@ -16,11 +16,11 @@ public class PlayerMovement : MonoBehaviour
     private int m_jumpcount = 1;
     private int m_maxjumpcount = 1;
     private float m_jumpheight = 10;
-    private int m_dashcount = 0;
-    private int m_maxdashcount = 0;
+    private int m_dashcount = 1;
+    private int m_maxdashcount = 1;
     private bool m_incutscene = true;
-    private bool m_canswitch
-    private float m_dashpower = 500;
+    private bool m_canswitch;
+    private float m_dashpower = 50;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
     private bool m_hasjumpedrecently;
@@ -141,14 +141,16 @@ public class PlayerMovement : MonoBehaviour
             // gets what input you did and dashes left or right accordingly.
             if(ctx.control.name == "a")
             {
-                m_rigidbody.AddForce(Vector3.left * m_dashpower, ForceMode.Impulse);
+
+
+                StartCoroutine(DashCoroutine(ctx.control.name));
             }
             if(ctx.control.name == "d")
             {
-                
-                m_rigidbody.AddForce(Vector3.right * m_dashpower, ForceMode.Impulse);
+                StartCoroutine(DashCoroutine(ctx.control.name));
+
             }
-            m_dashcount--;
+            m_dashcount = m_dashcount - 1;
         }
     }
     public void HandleSwitch(InputAction.CallbackContext ctx)
@@ -177,6 +179,26 @@ public class PlayerMovement : MonoBehaviour
         m_jumpcount = m_maxjumpcount - 1 ; // so you can still have your double jump but not your initial "grounded" jump;
         m_coyoteactive = false;
         
+    }
+    private IEnumerator DashCoroutine(string direction) // code for actually doing the dash
+    {
+        if (direction == "a")
+        {
+            for ( int i = 0; i < 10; i++)
+            {
+                m_rigidbody.AddForce(Vector3.left * m_dashpower, ForceMode.Impulse);
+                yield return new WaitForSeconds(0.025f);
+            }
+            
+        }
+        if (direction == "d")
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                m_rigidbody.AddForce(Vector3.right * m_dashpower, ForceMode.Impulse);
+                yield return new WaitForSeconds(0.025f);
+            }
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
