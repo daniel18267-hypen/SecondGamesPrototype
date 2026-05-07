@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private int m_dashcount = 0;
     private int m_maxdashcount = 0;
     private bool m_incutscene = true;
-    private bool m_canswitch = true;
+    private bool m_canswitch
     private float m_dashpower = 500;
     private Rigidbody m_rigidbody;
     private RaycastHit m_hit;
