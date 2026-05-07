@@ -10,6 +10,8 @@ using UnityEngine.Events;
 public class PlayerMovement : MonoBehaviour
 {
     public UnityEvent<bool> SwitchChanged;
+    public UnityEvent PlayerDeath;
+    public UnityEvent StartLava;
     private Vector2 m_playerdirection;
     private Vector3 m_spawnpoint;
     private float m_speed = 15;
@@ -213,15 +215,24 @@ public class PlayerMovement : MonoBehaviour
         else if (other.gameObject.tag == "switch")
         {
             m_canswitch = true;
+            SetCheckPoint(other.transform.position);
+            StartLava?.Invoke();
+
+        }
+        else if (other.gameObject.tag == "lava")
+        {
+            Death();
         }
     }
-    public void HandleSetCheckPoint(Vector3 m_checkpointlocation)
+    private void SetCheckPoint(Vector3 m_checkpointlocation)
     {
        m_spawnpoint = m_checkpointlocation;
     }
-    public void Death()
+    private void Death()
     {
         transform.position = m_spawnpoint;
+        PlayerDeath?.Invoke();
+
     }
     
 
