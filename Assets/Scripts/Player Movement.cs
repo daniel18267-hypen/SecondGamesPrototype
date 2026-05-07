@@ -207,6 +207,8 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "doublejump")
         {
             m_maxjumpcount = 2;
+            SetCheckPoint(other.transform.position);
+            StartLava?.Invoke();
         }
         else if(other.gameObject.tag == "dash")
         {
@@ -215,8 +217,7 @@ public class PlayerMovement : MonoBehaviour
         else if (other.gameObject.tag == "switch")
         {
             m_canswitch = true;
-            SetCheckPoint(other.transform.position);
-            StartLava?.Invoke();
+            
 
         }
         else if (other.gameObject.tag == "lava")
