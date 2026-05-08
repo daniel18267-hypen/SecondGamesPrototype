@@ -2,11 +2,14 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 public class CutsceneCode : MonoBehaviour
 {
     public UnityEvent CutSceneEnd;
     private TextMeshProUGUI m_tmpro;
-    [SerializeField] private string[] m_cutscenelines;
+    // cutscene lines for beginning and end cutscene, set in editor.
+    [SerializeField] private string[] m_cutscenelinesbeginning;
+    [SerializeField] private string[] m_cutscenelinesend;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -14,7 +17,7 @@ public class CutsceneCode : MonoBehaviour
     }
     void Start()
     {
-        StartCoroutine(TextCooldown());
+        StartCoroutine(TextCooldown(false));
     }
 
     // Update is called once per frame
@@ -22,14 +25,32 @@ public class CutsceneCode : MonoBehaviour
     {
         
     }
-    private IEnumerator TextCooldown()
+    public void EndHandler()
     {
-        for (int i = 0; i < m_cutscenelines.Length; i++)
+        StartCoroutine(TextCooldown(true));
+    }
+
+    private IEnumerator TextCooldown(bool m_isend)
+    {
+        if (m_isend == false)
         {
-            m_tmpro.text = m_cutscenelines[i];
-            yield return new WaitForSeconds(2.5f);
+            for (int i = 0; i < m_cutscenelinesbeginning.Length; i++)
+            {
+                m_tmpro.text = m_cutscenelinesbeginning[i];
+                yield return new WaitForSeconds(2.5f);
+            }
+
+            CutSceneEnd?.Invoke();
+            gameObject.SetActive(false);
         }
-        CutSceneEnd?.Invoke();
-        gameObject.SetActive(false);
+        else if (m_isend == true)
+        {
+            for (int i = 0; i < m_cutscenelinesend.Length; i++)
+            {
+                m_tmpro.text = m_cutscenelinesend[i];
+                yield return new WaitForSeconds(2.5f);
+            }
+        }
+        
     }
 }

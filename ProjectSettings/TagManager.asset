@@ -7,6 +7,8 @@ TagManager:
   - doublejump
   - dash
   - switch
+  - lava
+  - lavasummoner
   layers:
   - Default
   - TransparentFX

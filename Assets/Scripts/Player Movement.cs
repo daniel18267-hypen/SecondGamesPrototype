@@ -18,8 +18,8 @@ public class PlayerMovement : MonoBehaviour
     private int m_jumpcount = 1;
     private int m_maxjumpcount = 1;
     private float m_jumpheight = 10;
-    private int m_dashcount = 1;
-    private int m_maxdashcount = 1;
+    private int m_dashcount = 0;
+    private int m_maxdashcount = 0;
     private bool m_incutscene = true;
     private bool m_canswitch;
     private float m_dashpower = 50;
@@ -207,8 +207,6 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "doublejump")
         {
             m_maxjumpcount = 2;
-            SetCheckPoint(other.transform.position);
-            StartLava?.Invoke();
         }
         else if(other.gameObject.tag == "dash")
         {
@@ -225,9 +223,17 @@ public class PlayerMovement : MonoBehaviour
             Death();
         }
     }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "lavasummoner")
+        {
+            StartLava?.Invoke();
+            SetCheckPoint(other.transform.position);
+        }
+    }
     private void SetCheckPoint(Vector3 m_checkpointlocation)
     {
-       m_spawnpoint = m_checkpointlocation;
+       m_spawnpoint =   new Vector3(m_checkpointlocation.x,m_checkpointlocation.y,transform.position.z); // keeps z position as that is a constant
     }
     private void Death()
     {
