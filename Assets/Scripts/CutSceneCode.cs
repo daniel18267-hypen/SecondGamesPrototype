@@ -10,26 +10,26 @@ public class CutsceneCode : MonoBehaviour
     // cutscene lines for beginning and end cutscene, set in editor.
     [SerializeField] private string[] m_cutscenelinesbeginning;
     [SerializeField] private string[] m_cutscenelinesend;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
        m_tmpro =  GetComponentInChildren<TextMeshProUGUI>();
     }
     void Start()
     {
+        // on starts starts beginning cutscene.
         StartCoroutine(TextCooldown(false));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void EndHandler()
     {
+        gameObject.SetActive(true);
         StartCoroutine(TextCooldown(true));
     }
-
+    /// <summary>
+    /// if passes in false, starts beginning cutscene, if passes in true does ending cutscene
+    /// </summary>
+    /// <param name="m_isend"></param>
+    /// <returns></returns>
     private IEnumerator TextCooldown(bool m_isend)
     {
         if (m_isend == false)
@@ -39,7 +39,7 @@ public class CutsceneCode : MonoBehaviour
                 m_tmpro.text = m_cutscenelinesbeginning[i];
                 yield return new WaitForSeconds(2.5f);
             }
-
+            // unfreezes movement  in player controller, done so cant move around in cutscene
             CutSceneEnd?.Invoke();
             gameObject.SetActive(false);
         }

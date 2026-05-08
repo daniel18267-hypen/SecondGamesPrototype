@@ -9,6 +9,7 @@ TagManager:
   - switch
   - lava
   - lavasummoner
+  - end
   layers:
   - Default
   - TransparentFX

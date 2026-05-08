@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public UnityEvent<bool> SwitchChanged;
     public UnityEvent PlayerDeath;
+    public UnityEvent ReachedEnding;
     public UnityEvent StartLava;
     private Vector2 m_playerdirection;
     private Vector3 m_spawnpoint;
@@ -182,6 +183,11 @@ public class PlayerMovement : MonoBehaviour
         m_coyoteactive = false;
         
     }
+    /// <summary>
+    /// if double pressing "a" or "d" will more gradually add force in that direction to ensure it is smoother.
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
     private IEnumerator DashCoroutine(string direction) // code for actually doing the dash
     {
         if (direction == "a")
@@ -204,27 +210,30 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "doublejump")
+        switch(other.gameObject.tag)
         {
-            m_maxjumpcount = 2;
-        }
-        else if(other.gameObject.tag == "dash")
-        {
-            m_maxdashcount = 1;
-        }
-        else if (other.gameObject.tag == "switch")
-        {
-            m_canswitch = true;
-            
+            case ("doublejump"):
+                m_maxjumpcount = 2;
+                break;
+            case ("dash"):
+                m_maxdashcount = 1;
+                break;
+            case ("switch"):
+                m_canswitch = true;
+                break;
+            case ("lava"):
+                Death();
+                break;
+            case ("end"):
+                ReachedEnding?.Invoke();
+                break;
 
         }
-        else if (other.gameObject.tag == "lava")
-        {
-            Death();
-        }
+    
     }
     private void OnTriggerExit(Collider other)
     {
+        // starts lava rising when you exit the npc dialog.
         if (other.gameObject.tag == "lavasummoner")
         {
             StartLava?.Invoke();
@@ -238,6 +247,7 @@ public class PlayerMovement : MonoBehaviour
     private void Death()
     {
         transform.position = m_spawnpoint;
+        // player death activates event in lava script that sets it back to original position.
         PlayerDeath?.Invoke();
 
     }

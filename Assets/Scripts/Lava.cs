@@ -13,7 +13,7 @@ public class Lava : MonoBehaviour
     {
        if (m_movelava == true)
         {
-            transform.position += new Vector3(0f, 0.01f, 0f);
+            transform.position += new Vector3(0f, 0.02f, 0f);
         }
     }
     public void DeathHandler()
