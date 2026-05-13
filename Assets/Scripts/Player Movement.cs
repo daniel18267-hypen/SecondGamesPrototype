@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down,out m_hit,20, m_raylayer))
         {
             //Debug.Log(m_hit.distance);
-            // detects if on the ground and gives you back jump  and dashif you are.
+            // detects if on the ground and gives you back jump  and dash if you are.
             if ( m_hit.distance < 1.2 )
             {
                 //Debug.Log("Jump added too");
@@ -233,7 +233,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        // starts lava rising when you exit the npc dialog.
+        // starts lava rising when you exit the npc dialog and sets the checkpoint.
         if (other.gameObject.tag == "lavasummoner")
         {
             StartLava?.Invoke();

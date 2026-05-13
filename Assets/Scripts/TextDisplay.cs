@@ -32,7 +32,6 @@ public class TextDisplay : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             LeftTrigger?.Invoke();
-            SetSpawnPoint?.Invoke(transform.position);
            
         }
     }

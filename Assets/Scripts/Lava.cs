@@ -13,6 +13,7 @@ public class Lava : MonoBehaviour
     {
        if (m_movelava == true)
         {
+            // have to do it this way as cannot modify it's individual Y value
             transform.position += new Vector3(0f, 0.02f, 0f);
         }
     }
