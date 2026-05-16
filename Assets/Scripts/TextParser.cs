@@ -18,19 +18,13 @@ public class TextParser : MonoBehaviour
     private int m_textboxcount = 1;
     private string m_text;
     int m_index = 0;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+ 
     private void Awake()
     {
         m_canvasrenderer = GetComponent<CanvasRenderer>();
         m_canvasrenderer.SetAlpha(0f);
-        //gameObject.SetActive(false);
-    }
-    void Start()
-    {
-        
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -58,11 +52,9 @@ public class TextParser : MonoBehaviour
     }
     public void TextHandler(string text)
     {
-       // gameObject.SetActive(true);
         m_textfinished = false;
         m_canvasrenderer.SetAlpha(1f);
         m_index = 0;
-        //m_tmpro.text = "";
         m_textboxcount = 1;
         m_intrigger = true;
         m_text = text;
@@ -75,8 +67,6 @@ public class TextParser : MonoBehaviour
         m_intrigger = false;
         m_canvasrenderer.SetAlpha(0f);
         m_tmpro.text = "";
-        //gameObject.SetActive(false);
-        //gameObject.SetActive(false);
     }
     private IEnumerator TextCooldown()
     {
