@@ -12,6 +12,7 @@ public class CutsceneCode : MonoBehaviour
     [SerializeField] private string[] m_cutscenelinesend;
     private void Awake()
     {
+        // gets text component
        m_tmpro =  GetComponentInChildren<TextMeshProUGUI>();
     }
     void Start()
@@ -19,10 +20,14 @@ public class CutsceneCode : MonoBehaviour
         // on starts starts beginning cutscene.
         StartCoroutine(TextCooldown(false));
     }
-
+    /// <summary>
+    ///  when reaches end of level, event is called which this function listens too.
+    /// </summary>
     public void EndHandler()
     {
+      
         gameObject.SetActive(true);
+        // pases in true so ending cutscene is triggered
         StartCoroutine(TextCooldown(true));
     }
     /// <summary>
@@ -36,17 +41,20 @@ public class CutsceneCode : MonoBehaviour
         {
             for (int i = 0; i < m_cutscenelinesbeginning.Length; i++)
             {
+                // displays beginning cutscene lines, waits 2.5f before displaying next line
                 m_tmpro.text = m_cutscenelinesbeginning[i];
                 yield return new WaitForSeconds(2.5f);
             }
-            // unfreezes movement  in player controller, done so cant move around in cutscene
+            //event causes movement to be unfreezed  in player controller, done so cant move around while in cutscene
             CutSceneEnd?.Invoke();
+            // sets cutscene ui to be inactive.
             gameObject.SetActive(false);
         }
         else if (m_isend == true)
         {
             for (int i = 0; i < m_cutscenelinesend.Length; i++)
             {
+                // displays ending cutscene lines, waits 2.5f before displaying next line.
                 m_tmpro.text = m_cutscenelinesend[i];
                 yield return new WaitForSeconds(2.5f);
             }

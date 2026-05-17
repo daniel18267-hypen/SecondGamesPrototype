@@ -479,6 +479,17 @@
                     "action": "Switch",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8183b2a6-81cc-47d9-aa36-03f75743e7ed",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad;Keyboard&Mouse",
+                    "action": "Switch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
