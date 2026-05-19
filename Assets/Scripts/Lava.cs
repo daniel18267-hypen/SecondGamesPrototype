@@ -9,7 +9,6 @@ public class Lava : MonoBehaviour
         // gets the start position on awake
         m_startpos = transform.position;
     }
-
     private void FixedUpdate()
     {
        if (m_movelava == true)
